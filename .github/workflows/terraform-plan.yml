@@ -107,3 +107,7 @@ jobs:
             ls -al ${{ inputs.tfpath }} 
             7z a create-${{ inputs.TF_ENV }}-dir.7z -mx0 -p${{ inputs.PAT }} ${{ inputs.tfpath }}/.terraform ${{ inputs.tfpath }}/create-${{ inputs.TF_ENV }}.tfplan ${{ inputs.tfpath }}/.terraform.lock.hcl
 
+        - uses: actions/upload-artifact@master
+          with:
+            name: create-${{ inputs.TF_ENV }}-dir
+            path: ${{ inputs.tfpath }}/create-${{ inputs.TF_ENV }}-dir.7z
