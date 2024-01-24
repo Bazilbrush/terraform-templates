@@ -111,4 +111,4 @@ jobs:
         - uses: actions/upload-artifact@master
           with:
             name: create-${{ inputs.TF_ENV }}-dir
-            path: ${{ inputs.tfpath }}/create-${{ inputs.TF_ENV }}-dir.7z
+            path: create-${{ inputs.TF_ENV }}-dir.7z
