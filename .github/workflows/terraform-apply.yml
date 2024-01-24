@@ -17,7 +17,7 @@ on:
             description: 'encryption password'
             type: string
             required: false
-            default: 'placeholder'
+            default: ''
         platform: 
             description: 'cloud provider'
             type: string
