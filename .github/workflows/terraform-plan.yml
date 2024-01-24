@@ -100,7 +100,7 @@ jobs:
             fi
             terraform workspace select ${{ inputs.TF_ENV }} || terraform workspace new ${{ inputs.TF_ENV }}
             echo "** Running Terraform Plan**"
-            terraform plan -input=false var-file="{{ inputs.TF_ENV }}.tfvars" -out create-${{ inputs.TF_ENV }}.tfplan
+            terraform plan -input=false var-file="{{ inputs.TF_ENV }}.tfvars" -out=create-${{ inputs.TF_ENV }}.tfplan
     
         - name: encrypt TF dir
           run: |
