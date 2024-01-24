@@ -86,9 +86,8 @@ jobs:
         - name: decrypt TF dir
           run: |
             ls -al
-            # ls -al ${{ inputs.tfpath }} 
-            # 7z a create-${{ inputs.TF_ENV }}-dir.7z -mx0 -p${{ inputs.PAT }} ${{ inputs.tfpath }}/.terraform ${{ inputs.tfpath }}/create-${{ inputs.TF_ENV }}.tfplan ${{ inputs.tfpath }}/.terraform.lock.hcl
-            # ls -al
+            7z x -aoa -o${{ inputs.tfpath }} create-${{ inputs.TF_ENV }}-dir.7z -p${{ inputs.PAT  }}
+            ls -al ${{ inputs.tfpath }}
 
         - name: Setup Terraform CLI
           uses: hashicorp/setup-terraform@v2.0.2
