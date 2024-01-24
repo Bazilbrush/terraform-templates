@@ -105,5 +105,5 @@ jobs:
         - name: encrypt TF dir
           run: |
             ls -al ${{ inputs.tfpath }} 
-            7z a $(artifactName).7z -mx0 -p${{ inputs.PAT }} ${{ inputs.tfpath }} /.terraform ${{ inputs.tfpath }}/create-${{ inputs.TF_ENV }}.tfplan ${{ inputs.tfpath }}/.terraform.lock.hcl
+            7z a create-${{ inputs.TF_ENV }}-dir.7z -mx0 -p${{ inputs.PAT }} ${{ inputs.tfpath }}/.terraform ${{ inputs.tfpath }}/create-${{ inputs.TF_ENV }}.tfplan ${{ inputs.tfpath }}/.terraform.lock.hcl
 
