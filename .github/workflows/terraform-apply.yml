@@ -95,21 +95,20 @@ jobs:
           with: 
             terraform_version: 0.14.0  # yes we wanna hardcode this as we dont want people setting their own
 
-        # - name: Terraform Apply
-        #   working-directory: ${{ github.event.inputs.tfpath }}
-        #   env:
-        #     ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-        #     ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-        #     ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-        #     ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-        #   run: |
-        #     echo `pwd`
-        #     echo "tfpath ${{ github.event.inputs.tfpath }}"
-        #     echo "** Running Terraform Init**"
-        #     if [ "${{ inputs.platform }}" == "azure" ]; then
-        #         echo running in ${{ inputs.platform }}
-        #         terraform init -backend-config="resource_group_name=${{ inputs.AZ_RG_NAME }}" -backend-config="storage_account_name=${{ inputs.AZ_STORAGE_ACC }}" -backend-config="container_name=${{ inputs.AZ_STORAGE_CONTAINER }}" -backend-config="key=${{ inputs.BACKEND_KEY }}"
-        #     fi
-        #     terraform workspace select ${{ inputs.TF_ENV }} || terraform workspace new ${{ inputs.TF_ENV }}
-        #     echo "** Running Terraform Plan**"
-        #     terraform plan -input=false -var-file="${{ inputs.TF_ENV }}.tfvars" -out=create-${{ inputs.TF_ENV }}.tfplan
+        - name: Terraform Apply
+          working-directory: ${{ github.event.inputs.tfpath }}
+          env:
+            ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+            ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+            ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+            ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          run: |
+            echo `pwd`
+            echo "tfpath ${{ github.event.inputs.tfpath }}"
+            if [ "${{ inputs.platform }}" == "azure" ]; then
+                echo running in ${{ inputs.platform }}
+                terraform init -backend-config="resource_group_name=${{ inputs.AZ_RG_NAME }}" -backend-config="storage_account_name=${{ inputs.AZ_STORAGE_ACC }}" -backend-config="container_name=${{ inputs.AZ_STORAGE_CONTAINER }}" -backend-config="key=${{ inputs.BACKEND_KEY }}"
+            fi
+            terraform workspace select ${{ inputs.TF_ENV }} || terraform workspace new ${{ inputs.TF_ENV }}
+            echo "** Running Terraform Apply**"
+            terraform apply create-${{ inputs.TF_ENV }}.tfplan
