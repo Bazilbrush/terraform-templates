@@ -8,6 +8,16 @@ on:
             type: string 
             required: true
             default: 'infra'
+        TF_ENV:
+            description: 'terraform environment'
+            type: string
+            required: true
+            default: 'test'
+        PAT:
+            description: 'encryption password'
+            type: string
+            required: false
+            default: 'placeholder'
         platform: 
             description: 'cloud provider'
             type: string
@@ -88,6 +98,12 @@ jobs:
                 echo running in ${{ inputs.platform }}
                 terraform init -backend-config="resource_group_name=${{ inputs.AZ_RG_NAME }}" -backend-config="storage_account_name=${{ inputs.AZ_STORAGE_ACC }}" -backend-config="container_name=${{ inputs.AZ_STORAGE_CONTAINER }}" -backend-config="key=${{ inputs.BACKEND_KEY }}"
             fi
+            terraform workspace select ${{ inputs.TF_ENV }} || terraform workspace new ${{ inputs.TF_ENV }}
             echo "** Running Terraform Plan**"
-            terraform plan
+            terraform plan -input=false var-file="{{ inputs.TF_ENV }}.tfvars" -out create-${{ inputs.TF_ENV }}.tfplan
     
+        - name: encrypt TF dir
+          run: |
+            ls -al ${{ inputs.tfpath }} 
+            7z a $(artifactName).7z -mx0 -p${{ inputs.PAT }} ${{ inputs.tfpath }} /.terraform ${{ inputs.tfpath }}/create-${{ inputs.TF_ENV }}.tfplan ${{ inputs.tfpath }}/.terraform.lock.hcl
+
