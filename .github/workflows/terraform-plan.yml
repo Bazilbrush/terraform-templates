@@ -12,42 +12,11 @@ on:
             description: 'cloud provider'
             type: string
             default: azure
-        AWS_ACCESS_KEY:
-            description: 'AWS access key'
-            type: string
-            required: false
-            default: ''
-        AWS_SECRET_ACCESS_KEY:
-            description: 'AWS secret'
-            type: string
-            required: false
-            default: ''
         AWS_REGION:
             description: 'aws region'
             type: string
             required: false
             default: 'eu-west-1'
-            # Azure vars
-        ARM_CLIENT_ID:
-            description: 'service principal id'
-            type: string
-            required: false
-            default: ''
-        ARM_CLIENT_SECRET:
-            description: 'service principal secret'
-            type: string
-            required: false
-            default: ''
-        ARM_SUBSCRIPTION_ID:
-            description: 'sub id'
-            type: string
-            required: false
-            default: ''
-        ARM_TENANT_ID:
-            description: 'tenant id'
-            type: string
-            required: false
-            default: ''
         # azure bckend
         AZ_RG_NAME:
             description: 'resource group name'
@@ -69,6 +38,27 @@ on:
             type: string
             required: true
             default: default.tfstate
+    secrets:
+        AWS_ACCESS_KEY:
+            description: 'AWS access key'
+            required: false
+        AWS_SECRET_ACCESS_KEY:
+            description: 'AWS secret'
+            required: false
+            # Azure vars
+        ARM_CLIENT_ID:
+            description: 'service principal id'
+            required: false
+        ARM_CLIENT_SECRET:
+            description: 'service principal secret'
+            required: false
+        ARM_SUBSCRIPTION_ID:
+            description: 'sub id'
+            required: false
+        ARM_TENANT_ID:
+            description: 'tenant id'
+            required: false
+        
 jobs:
     tf_plan:
         name: Terraform Plan
