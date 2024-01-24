@@ -86,7 +86,8 @@ jobs:
         - name: decrypt TF dir
           run: |
             ls -al
-            7z x -aoa -o${{ inputs.tfpath }} create-${{ inputs.TF_ENV }}-dir.7z -p${{ inputs.PAT  }}
+            7z x -aoa -o${{ github.workspace }} create-${{ inputs.TF_ENV }}-dir.7z -p${{ inputs.PAT  }}
+            ls -al
             ls -al ${{ inputs.tfpath }}
 
         - name: Setup Terraform CLI
