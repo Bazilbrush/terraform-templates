@@ -1,4 +1,4 @@
-name: Terraform-Validate
+name: Terraform Validate
 
 on: 
   workflow_call:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   tf_code_check:
-    name: Terraform Validation and Build
+    name: Terraform Validation 
     runs-on: ubuntu-latest
 
     if:  ${{ inputs.tfpath }} 
@@ -23,13 +23,15 @@ jobs:
         terraform_version: 0.14.0  # yes we wanna hardcode this as we dont want people setting their own
 
     - name: Terraform Validate
+      working-directory: ${{ github.event.inputs.tfpath }}
       run: |
         echo `pwd`
         echo "tfpath ${{ github.event.inputs.tfpath }}"
         echo "** Running Terraform Init**"
-        # terraform init -backend=false
+        terraform init -backend=false
         echo "** Running Terraform Validate**"
         terraform validate
+        
 
 
     - name: Set up Python 3.8
