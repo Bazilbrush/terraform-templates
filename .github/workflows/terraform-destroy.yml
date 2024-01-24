@@ -1,0 +1,114 @@
+name: Terraform Destroy
+
+on: 
+  workflow_call:
+    inputs:
+        tfpath:
+            description: 'TF File Path'    
+            type: string 
+            required: true
+            default: 'infra'
+        TF_ENV:
+            description: 'terraform environment'
+            type: string
+            required: true
+            default: 'test'
+        PAT:
+            description: 'encryption password'
+            type: string
+            required: false
+            default: ''
+        platform: 
+            description: 'cloud provider'
+            type: string
+            default: azure
+        AWS_REGION:
+            description: 'aws region'
+            type: string
+            required: false
+            default: 'eu-west-1'
+        # azure bckend
+        AZ_RG_NAME:
+            description: 'resource group name'
+            type: string
+            required: false
+            default: ''
+        AZ_STORAGE_ACC:
+            description: 'storage account name'
+            type: string
+            required: false
+            default: ''
+        AZ_STORAGE_CONTAINER:
+            description: 'storage container name'
+            type: string
+            required: false
+            default: ''
+        BACKEND_KEY:
+            description: 'backend file key' #they can be the same for aws and azure not sure on glcoud
+            type: string
+            required: true
+            default: default.tfstate
+    secrets:
+        AWS_ACCESS_KEY:
+            description: 'AWS access key'
+            required: false
+        AWS_SECRET_ACCESS_KEY:
+            description: 'AWS secret'
+            required: false
+            # Azure vars
+        ARM_CLIENT_ID:
+            description: 'service principal id'
+            required: false
+        ARM_CLIENT_SECRET:
+            description: 'service principal secret'
+            required: false
+        ARM_SUBSCRIPTION_ID:
+            description: 'sub id'
+            required: false
+        ARM_TENANT_ID:
+            description: 'tenant id'
+            required: false
+
+jobs:
+    tf_apply:
+        name: Terraform Destroy
+        runs-on: ubuntu-latest
+
+        if:  ${{ inputs.tfpath }} 
+        steps:
+        - uses: actions/checkout@v2.5.0
+
+        - uses: actions/download-artifact@master
+          with:
+            name: destroy-${{ inputs.TF_ENV }}-dir
+            path: destroy-${{ inputs.TF_ENV }}-dir.7z
+
+        - name: decrypt TF dir
+          run: |
+            ls -al
+            7z x -aoa -o${{ github.workspace }} destroy-${{ inputs.TF_ENV }}-dir.7z -p${{ inputs.PAT  }}
+            ls -al
+            ls -al ${{ inputs.tfpath }}
+
+        - name: Setup Terraform CLI
+          uses: hashicorp/setup-terraform@v2.0.2
+          with: 
+            terraform_version: 0.14.0  # yes we wanna hardcode this as we dont want people setting their own
+
+        - name: Terraform destroy
+          working-directory: ${{ github.event.inputs.tfpath }}
+          env:
+            ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+            ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+            ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+            ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          run: |
+            echo `pwd`
+            echo "tfpath ${{ github.event.inputs.tfpath }}"
+            if [ "${{ inputs.platform }}" == "azure" ]; then
+                echo running in ${{ inputs.platform }}
+                terraform init -backend-config="resource_group_name=${{ inputs.AZ_RG_NAME }}" -backend-config="storage_account_name=${{ inputs.AZ_STORAGE_ACC }}" -backend-config="container_name=${{ inputs.AZ_STORAGE_CONTAINER }}" -backend-config="key=${{ inputs.BACKEND_KEY }}"
+            fi
+            terraform workspace select ${{ inputs.TF_ENV }} || terraform workspace new ${{ inputs.TF_ENV }}
+            echo "** Running Terraform destroy**"
+            terraform apply destroy-${{ inputs.TF_ENV }}.tfplan
