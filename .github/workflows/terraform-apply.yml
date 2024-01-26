@@ -73,6 +73,7 @@ jobs:
     tf_apply:
         name: Terraform Apply
         runs-on: ubuntu-latest
+        environment: ${{ inputs.TF_ENV }}
 
         if:  ${{ inputs.tfpath }} 
         steps:
