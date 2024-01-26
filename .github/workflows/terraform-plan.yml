@@ -68,6 +68,9 @@ on:
         ARM_TENANT_ID:
             description: 'tenant id'
             required: false
+        INFRACOST_API_KEY:
+            description: 'infra cost api key'
+            required: false
         
 jobs:
     tf_plan:
@@ -101,6 +104,21 @@ jobs:
             terraform workspace select ${{ inputs.TF_ENV }} || terraform workspace new ${{ inputs.TF_ENV }}
             echo "** Running Terraform Plan**"
             terraform plan -input=false -var-file="${{ inputs.TF_ENV }}.tfvars" -out=create-${{ inputs.TF_ENV }}.tfplan
+
+
+        - name: Setup Infracost
+          uses: infracost/actions/setup@v2
+            # See https://github.com/infracost/actions/tree/master/setup for other inputs
+            # If you can't use this action, see Docker images in https://infracost.io/cicd
+          with:
+            api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+        # Generate Infracost JSON file as the baseline.
+        - name: Generate Infracost cost estimate baseline
+          run: |
+            infracost breakdown --path=${{ inputs.tfpath }} \
+                            --format=json \
+                            --out-file=/tmp/infracost-base.json
     
         - name: encrypt TF dir
           run: |
