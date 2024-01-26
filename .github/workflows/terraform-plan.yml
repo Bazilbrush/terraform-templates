@@ -117,7 +117,7 @@ jobs:
         - name: Generate Infracost cost estimate baseline
           run: |
             infracost breakdown --path=${{ inputs.tfpath }}/create-${{ inputs.TF_ENV }}.tfplan \
-                            --format=json \
+                            --format=table \
                             
     
         - name: encrypt TF dir
