@@ -116,7 +116,7 @@ jobs:
         # Generate Infracost JSON file as the baseline.
         - name: Generate Infracost cost estimate baseline
           run: |
-            infracost breakdown --path=${{ inputs.tfpath }}/create-${{ inputs.TF_ENV }}.tfplan \
+            infracost breakdown --path=${{ inputs.tfpath }} \
                             --format=table \
                             
     
