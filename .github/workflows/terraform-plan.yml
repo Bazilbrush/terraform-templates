@@ -71,6 +71,10 @@ on:
         INFRACOST_API_KEY:
             description: 'infra cost api key'
             required: false
+
+permissions:
+    id-token: write
+    contents: read
         
 jobs:
     tf_plan:
