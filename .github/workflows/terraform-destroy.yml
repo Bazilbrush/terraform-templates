@@ -18,7 +18,7 @@ on:
             type: string
             required: false
             default: ''
-        platform: 
+        backend-platform: 
             description: 'cloud provider'
             type: string
             default: azure
@@ -106,8 +106,8 @@ jobs:
           run: |
             echo `pwd`
             echo "tfpath ${{ github.event.inputs.tfpath }}"
-            if [ "${{ inputs.platform }}" == "azure" ]; then
-                echo running in ${{ inputs.platform }}
+            if [ "${{ inputs.backend-platform }}" == "azure" ]; then
+                echo running in ${{ inputs.backend-platform }}
                 terraform init -backend-config="resource_group_name=${{ inputs.AZ_RG_NAME }}" -backend-config="storage_account_name=${{ inputs.AZ_STORAGE_ACC }}" -backend-config="container_name=${{ inputs.AZ_STORAGE_CONTAINER }}" -backend-config="key=${{ inputs.BACKEND_KEY }}"
             fi
             terraform workspace select ${{ inputs.TF_ENV }} || terraform workspace new ${{ inputs.TF_ENV }}
