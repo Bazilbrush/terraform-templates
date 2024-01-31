@@ -94,7 +94,7 @@ jobs:
           uses: aws-actions/configure-aws-credentials@v4
           with:
             role-to-assume: arn:aws:iam::339713169581:role/github-oidc
-            # role-session-name: samplerolesession
+            role-session-name: github-test
             aws-region: ${{ inputs.AWS_REGION }}
 
         - name: Get OIDC Token      
