@@ -105,9 +105,9 @@ jobs:
         - name: Terraform Plan
           working-directory: ${{ github.event.inputs.tfpath }}
           env:
-            AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_REGION: ${{ inputs.AWS_REGION }}
+            # AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+            # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            # AWS_REGION: ${{ inputs.AWS_REGION }}
             ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
             ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
             ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
