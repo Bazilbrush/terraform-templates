@@ -19,9 +19,17 @@ on:
             required: false
             default: ''
         backend-platform: 
-            description: 'cloud provider'
+            description: 'cloud providerfor backend'
             type: string
             default: azure
+        AWS_OIDC_ROLE:
+            description: 'OIDC role to assume for authentication in AWS'
+            type: string
+            default: ''
+        AWS_OIDC_SESSION_NAME:
+            description: 'Role session name for oidc conneciton' #do we need this?
+            type: string
+            default: ''
         AWS_REGION:
             description: 'aws region'
             type: string
@@ -49,12 +57,12 @@ on:
             required: true
             default: default.tfstate
     secrets:
-        AWS_ACCESS_KEY:
-            description: 'AWS access key'
-            required: false
-        AWS_SECRET_ACCESS_KEY:
-            description: 'AWS secret'
-            required: false
+        # AWS_ACCESS_KEY:
+        #     description: 'AWS access key'
+        #     required: false
+        # AWS_SECRET_ACCESS_KEY:
+        #     description: 'AWS secret'
+        #     required: false
             # Azure vars
         ARM_CLIENT_ID:
             description: 'service principal id'
@@ -93,8 +101,8 @@ jobs:
         - name: configure aws credentials
           uses: aws-actions/configure-aws-credentials@v4
           with:
-            role-to-assume: arn:aws:iam::339713169581:role/github-oidc
-            role-session-name: github-test
+            role-to-assume: ${{ inputs.AWS_OIDC_ROLE }}
+            role-session-name: ${{ inputs.AWS_OIDC_SESSION_NAME }}
             aws-region: ${{ inputs.AWS_REGION }}
 
         - name: Get OIDC Token      
@@ -105,9 +113,6 @@ jobs:
         - name: Terraform Plan
           working-directory: ${{ github.event.inputs.tfpath }}
           env:
-            # AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-            # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            # AWS_REGION: ${{ inputs.AWS_REGION }}
             ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
             ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
             ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
