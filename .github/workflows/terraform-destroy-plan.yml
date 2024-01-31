@@ -91,6 +91,18 @@ jobs:
           with: 
             terraform_version: 0.14.0  # yes we wanna hardcode this as we dont want people setting their own
     
+        - name: configure aws credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            role-to-assume: ${{ inputs.AWS_OIDC_ROLE }}
+            role-session-name: ${{ inputs.AWS_OIDC_SESSION_NAME }}
+            aws-region: ${{ inputs.AWS_REGION }}
+
+        - name: Get OIDC Token      
+          id: get_oidc_token     # there must be a cleaner way of doing this this token file is picked up in hcl when setting up proivder 
+          run: |         
+            curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r '.value' > /tmp/web_identity_token_file
+    
         - name: Terraform Plan Destroy
           working-directory: ${{ github.event.inputs.tfpath }}
           env:
