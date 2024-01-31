@@ -22,6 +22,14 @@ on:
             description: 'cloud provider'
             type: string
             default: azure
+        AWS_OIDC_ROLE:
+            description: 'OIDC role to assume for authentication in AWS'
+            type: string
+            default: ''
+        AWS_OIDC_SESSION_NAME:
+            description: 'Role session name for oidc conneciton' #do we need this?
+            type: string
+            default: ''
         AWS_REGION:
             description: 'aws region'
             type: string
@@ -49,12 +57,12 @@ on:
             required: true
             default: default.tfstate
     secrets:
-        AWS_ACCESS_KEY:
-            description: 'AWS access key'
-            required: false
-        AWS_SECRET_ACCESS_KEY:
-            description: 'AWS secret'
-            required: false
+        # AWS_ACCESS_KEY:
+        #     description: 'AWS access key'
+        #     required: false
+        # AWS_SECRET_ACCESS_KEY:
+        #     description: 'AWS secret'
+        #     required: false
             # Azure vars
         ARM_CLIENT_ID:
             description: 'service principal id'
