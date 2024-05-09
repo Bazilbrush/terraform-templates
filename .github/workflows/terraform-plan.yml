@@ -38,9 +38,11 @@ on:
         # aws banckend
         AWS_BUCKET:
             description: 'backend bucket name'
+            type: string
             required: false
             default: jackbazbackend
         AWS_BUCKET_KEY:
+            type: string
             description: 'bucket state key'
             required: false
             default: ''
