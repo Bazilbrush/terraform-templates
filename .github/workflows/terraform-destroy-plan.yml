@@ -35,6 +35,12 @@ on:
             type: string
             required: false
             default: 'eu-west-1'
+         # aws backend
+        AWS_BUCKET:
+            description: 'backend bucket name'
+            type: string
+            required: false
+            default: jackbazbackend
         # azure bckend
         AZ_RG_NAME:
             description: 'resource group name'
@@ -57,12 +63,6 @@ on:
             required: true
             default: default.tfstate
     secrets:
-        # AWS_ACCESS_KEY:
-        #     description: 'AWS access key'
-        #     required: false
-        # AWS_SECRET_ACCESS_KEY:
-        #     description: 'AWS secret'
-        #     required: false
             # Azure vars
         ARM_CLIENT_ID:
             description: 'service principal id'
@@ -119,6 +119,9 @@ jobs:
             if [ "${{ inputs.backend-platform }}" == "azure" ]; then
                 echo running in ${{ inputs.backend-platform }}
                 terraform init -backend-config="resource_group_name=${{ inputs.AZ_RG_NAME }}" -backend-config="storage_account_name=${{ inputs.AZ_STORAGE_ACC }}" -backend-config="container_name=${{ inputs.AZ_STORAGE_CONTAINER }}" -backend-config="key=${{ inputs.BACKEND_KEY }}"
+            elif [ "${{ inputs.backend-platform }}" == "aws" ]; then
+                echo running in ${{ inputs.backend-platform }}
+                terraform init -backend-config="bucket=${{ inputs.AWS_BUCKET }}" -backend-config="key=${{ inputs.BACKEND_KEY }}" -backend-config="region=${{ inputs.AWS_REGION }}"
             fi
             terraform workspace select ${{ inputs.TF_ENV }} || terraform workspace new ${{ inputs.TF_ENV }}
             echo "** Running Terraform Destroy Plan**"
