@@ -35,7 +35,7 @@ on:
             type: string
             required: false
             default: 'eu-west-1'
-        # aws banckend
+        # aws backend
         AWS_BUCKET:
             description: 'backend bucket name'
             type: string
