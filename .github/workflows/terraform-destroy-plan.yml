@@ -89,7 +89,7 @@ jobs:
         - name: Setup Terraform CLI
           uses: hashicorp/setup-terraform@v2.0.2
           with: 
-            terraform_version: 0.14.0  # yes we wanna hardcode this as we dont want people setting their own
+            terraform_version: 1.12.0  # yes we wanna hardcode this as we dont want people setting their own
     
         - name: configure aws credentials
           if: ${{ inputs.AWS_OIDC_ROLE }}
