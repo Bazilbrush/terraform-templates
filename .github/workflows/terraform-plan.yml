@@ -17,7 +17,7 @@ on:
             description: 'encryption password'
             type: string
             required: false
-            default: ''
+            default: 'test'
         backend-platform: 
             description: 'cloud providerfor backend'
             type: string

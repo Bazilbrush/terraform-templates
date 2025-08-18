@@ -1,0 +1,10 @@
+name: Ansible Provision
+
+on: 
+  workflow_call:
+    inputs:
+        tfpath:
+          description: 'TF File Path'    
+          type: string 
+          required: true
+          default: 'infra'
