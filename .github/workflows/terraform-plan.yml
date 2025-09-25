@@ -63,6 +63,13 @@ on:
             type: string
             required: true
             default: default.tfstate
+
+        pre_tasks:
+            required: false
+            type: string
+        post_tasks:
+            required: false
+            type: string
     secrets:
             # Azure vars
         ARM_CLIENT_ID:
@@ -93,6 +100,13 @@ jobs:
         if:  ${{ inputs.tfpath }} 
         steps:
         - uses: actions/checkout@v2.5.0
+
+        # Optional extra steps (passed in as JSON or YAML string)
+        - name: Run extra steps before terraform
+          if: ${{ inputs.pre_tasks != '' }}
+          run: |
+            echo "${{ inputs.pre_tasks }}" > pre_steps.yml
+            yq eval '.steps' pre_steps.yml | tee dynamic-pre-steps.yml
 
         - name: Setup Terraform CLI
           uses: hashicorp/setup-terraform@v2.0.2
@@ -148,7 +162,13 @@ jobs:
         #  run: |
          #   infracost breakdown --path=${{ inputs.tfpath }} \
           #                  --format=table \
-                            
+
+        # Optional extra steps (passed in as JSON or YAML string)
+        - name: Run extra steps after terraform
+          if: ${{ inputs.post_tasks != '' }}
+          run: |
+            echo "${{ inputs.post_tasks }}" > post_steps.yml
+            yq eval '.steps' post_steps.yml | tee dynamic-post-steps.yml                   
     
         - name: encrypt TF dir
           run: |
