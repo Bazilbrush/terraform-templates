@@ -90,8 +90,8 @@ on:
             description: 'infra cost api key'
             required: false
          # freeform vars
-        TFVARS_JSON:
-            required: false
+        # TFVARS_JSON:
+        #     required: false
             
 
 permissions:
@@ -101,8 +101,9 @@ permissions:
 jobs:
     tf_plan:
         name: Terraform Plan
+        
         runs-on: ubuntu-latest
-    
+        
         if:  ${{ inputs.tfpath }} 
         steps:
         - uses: actions/checkout@v2.5.0
@@ -140,18 +141,8 @@ jobs:
             ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
             ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
             ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-            TFVARS_JSON: ${{ secrets.TFVARS_JSON || '' }}
+            # TFVARS_JSON: ${{ secrets.TFVARS_JSON || '' }}
           run: |
-            # Inject optional tfvars from JSON secret
-            if [ -n "$TFVARS_JSON" ]; then
-            echo "** Injecting tfvars as TF_VAR_* **"
-            echo "$TFVARS_JSON" | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' | while IFS== read -r key value; do
-                export TF_VAR_$key="$value"
-                echo "Exported TF_VAR_$key"
-            done
-            else
-            echo "No TFVARS_JSON secret found, skipping variable injection"
-            fi
 
             echo `pwd`
             echo "tfpath ${{ github.event.inputs.tfpath }}"
