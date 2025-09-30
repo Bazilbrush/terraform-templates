@@ -64,10 +64,7 @@ on:
             required: true
             default: default.tfstate
         
-        # freeform vars
-        tfvars:
-            required: false
-            type: string 
+       
 
         pre_tasks:
             required: false
@@ -92,6 +89,10 @@ on:
         INFRACOST_API_KEY:
             description: 'infra cost api key'
             required: false
+         # freeform vars
+        tfvars:
+            required: false
+            
 
 permissions:
     id-token: write
@@ -141,8 +142,8 @@ jobs:
             ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           run: |
             echo "** Injecting tfvars as TF_VAR_* **"
-            for key in $(echo '${{ inputs.tfvars }}' | jq -r 'keys[]'); do
-                value=$(echo '${{ inputs.tfvars }}' | jq -r --arg k "$key" '.[$k]')
+            for key in $(echo '${{ secrets.tfvars }}' | jq -r 'keys[]'); do
+                value=$(echo '${{ secrets.tfvars }}' | jq -r --arg k "$key" '.[$k]')
                 export TF_VAR_$key="$value"
                 echo "Exported TF_VAR_$key"
             done
