@@ -64,6 +64,10 @@ on:
             required: true
             default: default.tfstate
         
+        tailscale: 
+            type: boolean
+            required: false
+        
        
 
         pre_tasks:
@@ -89,6 +93,10 @@ on:
         INFRACOST_API_KEY:
             description: 'infra cost api key'
             required: false
+        TS_OAUTH_CLIENT_ID:
+            required: false
+        TS_OAUTH_SECRET:
+            required: false   
          # freeform vars
         # TFVARS_JSON:
         #     required: false
@@ -114,6 +122,14 @@ jobs:
           run: |
             echo "${{ inputs.pre_tasks }}" > pre_steps.yml
             yq eval '.steps' pre_steps.yml | tee dynamic-pre-steps.yml
+
+        - name: Tailscale
+          if: ${{ inputs.tailscale }} 
+          uses: tailscale/github-action@v3
+          with:
+            oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+            oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+            tags: tag:ci
 
         - name: Setup Terraform CLI
           uses: hashicorp/setup-terraform@v2.0.2
