@@ -189,11 +189,17 @@ jobs:
           #                  --format=table \
 
         # Optional extra steps (passed in as JSON or YAML string)
+        # - name: Run extra steps after terraform
+        #   if: ${{ inputs.post_tasks != '' }}
+        #   run: |
+        #     echo "${{ inputs.post_tasks }}" > post_steps.yml
+        #     yq eval '.steps' post_steps.yml | tee dynamic-post-steps.yml 
+
         - name: Run extra steps after terraform
-          if: ${{ inputs.post_tasks != '' }}
+          if: ${{ inputs.post_tasks && inputs.post_tasks != '' }}
           run: |
-            echo "${{ inputs.post_tasks }}" > post_steps.yml
-            yq eval '.steps' post_steps.yml | tee dynamic-post-steps.yml                   
+            echo "Running dynamic post tasks..."
+            echo "${{ inputs.post_tasks }}"                 
     
         - name: encrypt TF dir
           run: |
