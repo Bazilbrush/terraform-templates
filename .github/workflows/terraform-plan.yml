@@ -131,6 +131,10 @@ jobs:
             oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
             tags: tag:ci
 
+        - name: Debug tailscale status
+          if: ${{ inputs.tailscale }} 
+          run: tailscale status
+
         - name: Setup Terraform CLI
           uses: hashicorp/setup-terraform@v2.0.2
           with: 
