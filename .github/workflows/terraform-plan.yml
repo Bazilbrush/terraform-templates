@@ -68,14 +68,6 @@ on:
             type: boolean
             required: false
         
-       
-
-        pre_tasks:
-            required: false
-            type: string
-        post_tasks:
-            required: false
-            type: string
     secrets:
             # Azure vars
         ARM_CLIENT_ID:
@@ -97,10 +89,8 @@ on:
             required: false
         TS_OAUTH_SECRET:
             required: false   
-         # freeform vars
-        # TFVARS_JSON:
-        #     required: false
-            
+        pm_password:
+            required: false
 
 permissions:
     id-token: write
@@ -161,7 +151,7 @@ jobs:
             ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
             ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
             ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-            # TFVARS_JSON: ${{ secrets.TFVARS_JSON || '' }}
+            TF_VAR_pm_password: ${{ secerts.pm_password }}
           run: |
 
             echo `pwd`

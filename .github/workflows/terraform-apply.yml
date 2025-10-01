@@ -63,12 +63,10 @@ on:
             required: true
             default: default.tfstate
 
-        pre_tasks:
+        tailscale: 
+            type: boolean
             required: false
-            type: string
-        post_tasks:
-            required: false
-            type: string
+
     secrets:
             # Azure vars
         ARM_CLIENT_ID:
@@ -83,6 +81,12 @@ on:
         ARM_TENANT_ID:
             description: 'tenant id'
             required: false
+        TS_OAUTH_CLIENT_ID:
+            required: false
+        TS_OAUTH_SECRET:
+            required: false   
+        pm_password:
+            required: false
 
 jobs:
     tf_apply:
@@ -93,6 +97,18 @@ jobs:
         if:  ${{ inputs.tfpath }} 
         steps:
         - uses: actions/checkout@v2.5.0
+
+        - name: Tailscale
+          if: ${{ inputs.tailscale }} 
+          uses: tailscale/github-action@v3
+          with:
+            oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+            oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+            tags: tag:ci
+
+        - name: Debug tailscale status
+          if: ${{ inputs.tailscale }} 
+          run: tailscale status
 
         - uses: actions/download-artifact@master
           with:
@@ -106,13 +122,7 @@ jobs:
             ls -al
             ls -al ${{ inputs.tfpath }}
 
-        # Optional extra steps (passed in as JSON or YAML string)
-        - name: Run extra steps before terraform
-          if: ${{ inputs.pre_tasks != '' }}
-          run: |
-            echo "${{ inputs.pre_tasks }}" > pre_steps.yml
-            yq eval '.steps' pre_steps.yml | tee dynamic-pre-steps.yml
-
+     
         - name: Setup Terraform CLI
           uses: hashicorp/setup-terraform@v2.0.2
           with: 
@@ -153,10 +163,3 @@ jobs:
             echo "** Running Terraform Apply**"
             terraform apply create-${{ inputs.TF_ENV }}.tfplan
 
-
-        # Optional extra steps (passed in as JSON or YAML string)
-        - name: Run extra steps after terraform
-          if: ${{ inputs.post_tasks != '' }}
-          run: |
-            echo "${{ inputs.post_tasks }}" > post_steps.yml
-            yq eval '.steps' post_steps.yml | tee dynamic-post-steps.yml  
